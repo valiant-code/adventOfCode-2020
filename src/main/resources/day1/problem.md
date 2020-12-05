@@ -1,20 +1,25 @@
---- Day 1: The Tyranny of the Rocket Equation ---
-Santa has become stranded at the edge of the Solar System while delivering presents to other planets! To accurately calculate his position in space, safely align his warp drive, and return to Earth in time to save Christmas, he needs you to bring him measurements from fifty stars.
+--- Day 1: Report Repair ---
+After saving Christmas five years in a row, you've decided to take a vacation at a nice resort on a tropical island. Surely, Christmas will go on without you.
+
+The tropical island has its own currency and is entirely cash-only. The gold coins used there have a little picture of a starfish; the locals just call them stars. None of the currency exchanges seem to have heard of them, but somehow, you'll need to find fifty of these coins by the time you arrive so you can pay the deposit on your room.
+
+To save your vacation, you need to get all fifty stars by December 25th.
 
 Collect stars by solving puzzles. Two puzzles will be made available on each day in the Advent calendar; the second puzzle is unlocked when you complete the first. Each puzzle grants one star. Good luck!
 
-The Elves quickly load you into a spacecraft and prepare to launch.
+Before you leave, the Elves in accounting just need you to fix your expense report (your puzzle input); apparently, something isn't quite adding up.
 
-At the first Go / No Go poll, every Elf is Go until the Fuel Counter-Upper. They haven't determined the amount of fuel required yet.
+Specifically, they need you to find the two entries that sum to 2020 and then multiply those two numbers together.
 
-Fuel required to launch a given module is based on its mass. Specifically, to find the fuel required for a module, take its mass, divide by three, round down, and subtract 2.
+For example, suppose your expense report contained the following:
 
-For example:
+* 1721 
+* 979
+* 366
+* 299
+* 675
+* 1456
 
-For a mass of 12, divide by 3 and round down to get 4, then subtract 2 to get 2.
-For a mass of 14, dividing by 3 and rounding down still yields 4, so the fuel required is also 2.
-For a mass of 1969, the fuel required is 654.
-For a mass of 100756, the fuel required is 33583.
-The Fuel Counter-Upper needs to know the total fuel requirement. To find it, individually calculate the fuel needed for the mass of each module (your puzzle input), then add together all the fuel values.
+In this list, the two entries that sum to 2020 are 1721 and 299. Multiplying them together produces 1721 * 299 = 514579, so the correct answer is 514579.
 
-What is the sum of the fuel requirements for all of the modules on your spacecraft?
+Of course, your expense report is much larger. Find the two entries that sum to 2020; what do you get if you multiply them together?

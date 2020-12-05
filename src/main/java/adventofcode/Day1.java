@@ -1,7 +1,9 @@
 package adventofcode;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Day1 {
 
@@ -12,24 +14,44 @@ public class Day1 {
 
     private static void partOne() throws IOException {
         List<Integer> input = InputUtil.readFileAsIntList("day1/input.txt");
-        int accumulator = input.stream().mapToInt(Day1::formula).sum();
-        System.out.println("Part 1: " + accumulator);
+        boolean done = false;
+
+        List<Integer> unprocessedInput = new ArrayList<>(input);
+        for (int i = 0; i < input.size(); i++) {
+            int cur = input.remove(0);
+            Optional<Integer> partner = input.stream().filter(num -> num + cur == 2020).findAny();
+            if (partner.isPresent()) {
+                System.out.println("Part 1: " + cur * partner.get());
+                done = true;
+            }
+            ;
+        }
+        if (!done) {
+            System.out.println("Part 1 failed");
+
+        }
     }
 
     private static void partTwo() throws IOException {
         List<Integer> input = InputUtil.readFileAsIntList("day1/input.txt");
-        int accumulator = 0;
-        accumulator = input.stream().mapToInt(num -> {
-            int baseFuelNeeded = formula(num);
-            int totalFuelNeeded = baseFuelNeeded;
-            int fuelNeededForFuelWeight = formula(baseFuelNeeded);
-            while (fuelNeededForFuelWeight > 0) {
-                totalFuelNeeded += fuelNeededForFuelWeight;
-                fuelNeededForFuelWeight = formula(fuelNeededForFuelWeight);
+        boolean done = false;
+
+        for (int i = 0; i < input.size(); i++) {
+            int cur = input.remove(0);
+            List<Integer> unprocessedInput = new ArrayList<>(input);
+            for (int j = 0; j < unprocessedInput.size(); j++) {
+                int nxt = unprocessedInput.remove(0);
+                int curVal = cur + nxt;
+                Optional<Integer> partner = unprocessedInput.stream().filter(num -> num + curVal == 2020).findAny();
+                if (partner.isPresent()) {
+                    System.out.println("Part 2: " + cur * nxt * partner.get());
+                    done = true;
+                }
             }
-            return totalFuelNeeded;
-        }).sum();
-        System.out.println("Part 2: " + accumulator);
+        }
+        if (!done) {
+            System.out.println("Part 2 failed");
+        }
     }
 
     private static int formula(int n) {
