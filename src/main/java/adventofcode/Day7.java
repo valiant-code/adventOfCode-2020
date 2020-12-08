@@ -37,17 +37,17 @@ public class Day7 {
 
         Set<String> bagsThatCanContainGold = new HashSet<>();
 
-        Set<String> containers = new HashSet<>(findBagsThatContain("shiny gold bag", ruleMap));
+        Set<String> containers = new HashSet<>(findBagsThatContainAll("shiny gold bag", ruleMap));
         bagsThatCanContainGold.addAll(containers);
-
-        while (containers.size() > 0) {
-            HashSet<String> copy = new HashSet<>(containers);
-            containers = new HashSet<>();
-            Set<String> finalContainers = containers;
-            copy.forEach(c -> finalContainers.addAll(findBagsThatContain(c, ruleMap)));
-            containers = finalContainers;
-            bagsThatCanContainGold.addAll(containers);
-        }
+//
+//        while (containers.size() > 0) {
+//            HashSet<String> copy = new HashSet<>(containers);
+//            containers = new HashSet<>();
+//            Set<String> finalContainers = containers;
+//            copy.forEach(c -> finalContainers.addAll(findBagsThatContain(c, ruleMap)));
+//            containers = finalContainers;
+//            bagsThatCanContainGold.addAll(containers);
+//        }
 
 
         System.out.println("Part 1: " + bagsThatCanContainGold.size());
@@ -64,8 +64,12 @@ public class Day7 {
     }
 
 
-    private static List<String> findBagsInside(String bagName, Map<String, List<BagRule>> ruleMap) {
-        return ruleMap.entrySet().stream().filter(r -> r.getValue().stream().anyMatch(br -> br.getChild().equals(bagName))).map(Map.Entry::getKey).collect(Collectors.toList());
+    private static List<String> findBagsThatContainAll(String bagName, Map<String, List<BagRule>> ruleMap) {
+        //get bags that contain our search query
+        Set<String> bagsThatContain = ruleMap.entrySet().stream().filter(r -> r.getValue().stream().anyMatch(br -> br.getChild().equals(bagName))).map(Map.Entry::getKey).collect(Collectors.toSet());
+        //then use recursion to find what bags contain those
+        bagsThatContain.addAll(bagsThatContain.stream().map(i -> findBagsThatContainAll(i, ruleMap)).flatMap(Collection::stream).collect(Collectors.toList()));
+        return new ArrayList<>(bagsThatContain);
     }
 
 
