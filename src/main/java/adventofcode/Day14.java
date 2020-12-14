@@ -33,7 +33,7 @@ public class Day14 {
                 Matcher m = p.matcher(lineParts[0]);
                 m.find();
                 int address = Integer.parseInt(m.group());
-                memory.put(address, applyMask(mask, Integer.parseInt(lineParts[1])));
+                memory.put(address, applyPt1Mask(mask, Integer.parseInt(lineParts[1])));
             }
         }
         BigInteger sum = memory.values().stream()
@@ -42,41 +42,8 @@ public class Day14 {
         System.out.println("Part 1: " + sum);
     }
 
-    private static Set<String[]> applyPt2Mask(String[] mask, String[] binaryAddress) {
-        List<Integer> xIndexes = new ArrayList<>();
-        for (int i = 0; i < mask.length; i++) {
-            if ("0".equalsIgnoreCase(mask[i])) {
-                continue;
-            } else {
-                binaryAddress[i] = mask[i];
-                if ("X".equalsIgnoreCase(mask[i])) {
-                    xIndexes.add(i);
-                }
-            }
-        }
-        //now handle x's 1000x0x01x
-        List<String[]> permutations = new ArrayList<>();
-        permutations.add(binaryAddress);
-        for (int index : xIndexes) {
-            //loop through our list of current permutations, and replace each X with its two permutations of 0 & 1
-            permutations = permutations.stream()
-                    .flatMap(a -> {
-                        //using flat map to make each array into 2 different ones
-                        String[] scenario0 = Arrays.stream(a).toArray(String[]::new);
-                        scenario0[index] = "0";
-                        String[] scenario1 = a;
-                        scenario1[index] = "1";
-                        return Stream.of(scenario0, scenario1);
-                    })
-                    .collect(Collectors.toList());
-        }
 
-
-        return new HashSet<>(permutations);
-    }
-
-
-    private static String[] applyMask(String[] mask, int value) {
+    private static String[] applyPt1Mask(String[] mask, int value) {
         String[] binary = String.format("%36s", Integer.toBinaryString(value)).replace(" ", "0").split("");
         for (int i = 0; i < mask.length; i++) {
             if (!"X".equalsIgnoreCase(mask[i])) {
@@ -117,7 +84,40 @@ public class Day14 {
         System.out.println("Part 2: " + sum);
         //Part 1: 3059488894985
         //Part 2: 2900994392308
+    }
 
+    private static Set<String[]> applyPt2Mask(String[] mask, String[] binaryAddress) {
+        List<Integer> xIndexes = new ArrayList<>();
+        for (int i = 0; i < mask.length; i++) {
+            switch (mask[i].toUpperCase()) {
+                case "X":
+                    xIndexes.add(i);
+                case "1":
+                    binaryAddress[i] = mask[i];
+                    break;
+                case "0":
+                    break;
+                default:
+                    throw new RuntimeException("something went wrong");
+            }
+        }
+        //now handle x's 1000x0x01x
+        Set<String[]> permutations = new HashSet<>();
+        permutations.add(binaryAddress);
+        for (int index : xIndexes) {
+            //loop through our list of current permutations, and replace each X with its two permutations of 0 & 1
+            permutations = permutations.stream()
+                    .flatMap(a -> {
+                        //using flat map to make each array into 2 different ones
+                        String[] scenario0 = Arrays.stream(a).toArray(String[]::new);
+                        scenario0[index] = "0";
+                        String[] scenario1 = a;
+                        scenario1[index] = "1";
+                        return Stream.of(scenario0, scenario1);
+                    })
+                    .collect(Collectors.toSet());
+        }
+        return new HashSet<>(permutations);
     }
 
 
