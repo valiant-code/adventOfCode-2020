@@ -13,8 +13,8 @@ public class TimeUtil {
 
     public static void time() {
         long end = System.currentTimeMillis();
-        System.out.println("Pt " + pt + " Start Time: " + start);
-        System.out.println("Pt " + pt + " End Time:   " + end);
+//        System.out.println("Pt " + pt + " Start Time: " + start);
+//        System.out.println("Pt " + pt + " End Time:   " + end);
         System.out.println("Pt " + pt + " Time Taken: " + (end - start) / 1000f + "\n");
     }
 
