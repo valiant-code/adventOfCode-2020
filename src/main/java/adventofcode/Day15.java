@@ -8,13 +8,22 @@ import java.util.stream.Collectors;
 
 public class Day15 {
 
-
     public static void main(String[] args) throws IOException {
-        partOne();
-        partTwo();
+        boolean runPart1 = true;
+        boolean runPart2 = true;
+        if (runPart1) {
+            TimeUtil.startClock(1);
+            partOne();
+            TimeUtil.time();
+        }
+        if (runPart2) {
+            TimeUtil.startClock(2);
+            partTwo();
+            TimeUtil.time();
+        }
     }
 
-    private static void partOne() throws IOException {
+    public static void partOne() throws IOException {
         List<String> input = InputUtil.readFileAsStringList("day15/input.txt", ",");
         List<Integer> numberList = input.stream().map(Integer::parseInt).collect(Collectors.toList());
         Integer numberUnderConsideration = numberList.remove(numberList.size() - 1);
@@ -24,18 +33,17 @@ public class Day15 {
             numberUnderConsideration = lastIndexOfNum == -1 ? 0 : (numberList.size() - 1) - lastIndexOfNum;
         }
 
-
         System.out.println("Part 1: " + numberList.get(2019));
     }
 
 
-    private static void partTwo() throws IOException {
+    public static void partTwo() throws IOException {
         List<String> input = InputUtil.readFileAsStringList("day15/input.txt", ",");
         List<Integer> numberInput = input.stream().map(Integer::parseInt).collect(Collectors.toList());
         //remove the last number to store it in the numberUnderConsideration field
         Integer numberUnderConsideration = numberInput.remove(numberInput.size() - 1);
         //30000000 is a much larger target.. fine I'll use a map
-        Map<Integer, Integer> numberMap = new HashMap<>(5611423);
+        Map<Integer, Integer> numberMap = new HashMap<>(3911423, .9f);
         for (int i = 0; i < numberInput.size(); i++) { //put our initial input into the map
             numberMap.put(numberInput.get(i), i);
         }
