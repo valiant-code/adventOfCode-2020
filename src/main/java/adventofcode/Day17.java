@@ -28,15 +28,13 @@ public class Day17 {
 
     public static void partOne() throws IOException {
         List<String> input = InputUtil.readFileAsStringList("day17/input.txt");
-        int universeLength = 500;
-        int midpoint = universeLength / 2;
         Map<List<Integer>, Boolean> universeMap = new HashMap<>();
 
         for (int i = 0; i < input.size(); i++) {
             List<Boolean> line = Arrays.stream(input.get(i).split("")).map("#"::equals).collect(Collectors.toList());
             for (int j = 0; j < line.size(); j++) {
                 if (line.get(j)) {
-                    universeMap.put(key(midpoint + j, midpoint + i, midpoint), true);
+                    universeMap.put(key(j, i, 0), true);
                 }
             }
         }
@@ -84,6 +82,7 @@ public class Day17 {
             List<Boolean> line = Arrays.stream(input.get(i).split("")).map("#"::equals).collect(Collectors.toList());
             for (int j = 0; j < line.size(); j++) {
                 if (line.get(j)) {
+                    //4D this time
                     universeMap.put(key(j, i, 0, 0), true);
                 }
             }
