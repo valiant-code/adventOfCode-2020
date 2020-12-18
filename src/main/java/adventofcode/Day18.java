@@ -45,17 +45,16 @@ public class Day18 {
             //negative lookahead to ensure we find the last (
             // and then lazy dot quantifier .*?) to get the first right paren after that
             "\\((?!.*\\().*?\\)");
+
     private static long evaluateExpression(String expression) {
         //while the expression has any more parenthesis inside, find the innermost parenthetical expressions
         // and recursively call this function on that substring to evaluate them
         while (expression.contains("(")) {
             Matcher matcher = innerMostParensRegex.matcher(expression);
-            if (matcher.find()) {
-                String innerExpression = matcher.group().replaceAll("[()]", "");
-                expression = matcher.replaceFirst(String.valueOf(evaluateExpression(innerExpression)));
-            } else {
-                int holdup = 0;
-            }
+            matcher.find();
+            String innerExpression = matcher.group().replaceAll("[()]", "");
+            expression = matcher.replaceFirst(String.valueOf(evaluateExpression(innerExpression)));
+
         }
 
         List<String> symbols = new ArrayList<>(Arrays.asList(expression.split(" ")));
