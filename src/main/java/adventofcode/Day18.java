@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Day18 {
 
@@ -39,10 +41,21 @@ public class Day18 {
         System.out.println("Part 1 Answer: " + acc);
     }
 
+    private static Pattern innerMostParensRegex = Pattern.compile(
+            //negative lookahead to ensure we find the last (
+            // and then lazy dot quantifier .*?) to get the first right paren after that
+            "\\((?!.*\\().*?\\)");
     private static long evaluateExpression(String expression) {
-        //while the expression has any more parenthesis inside, call the function to evaluate them
+        //while the expression has any more parenthesis inside, find the innermost parenthetical expressions
+        // and recursively call this function on that substring to evaluate them
         while (expression.contains("(")) {
-            expression = evaluateParens(expression);
+            Matcher matcher = innerMostParensRegex.matcher(expression);
+            if (matcher.find()) {
+                String innerExpression = matcher.group().replaceAll("[()]", "");
+                expression = matcher.replaceFirst(String.valueOf(evaluateExpression(innerExpression)));
+            } else {
+                int holdup = 0;
+            }
         }
 
         List<String> symbols = new ArrayList<>(Arrays.asList(expression.split(" ")));
@@ -63,7 +76,7 @@ public class Day18 {
             }
         }
 
-        //start with the first number and then evaluate from left to ight
+        //start with the first number and then evaluate from left to right
         long currNum = Long.parseLong(symbols.remove(0));
         String currOperation = null;
         for (String symbol : symbols) {
@@ -88,21 +101,6 @@ public class Day18 {
         }
 
         return currNum;
-    }
-
-    private static String evaluateParens(String expression) {
-        //work backwards, getting the last ( and then the first ) after that
-        int startIndex = expression.lastIndexOf("(");
-        int endIndex = expression.indexOf(")", startIndex);
-        //a little bit of recursive ping pong here, call evaluateExpression for the string inside our parens
-        String expressionWithinParens = expression.substring(startIndex, endIndex + 1).replaceAll("[()]", "");
-        long innerExpressionValue = evaluateExpression(expressionWithinParens);
-        //our result is the original expression string, with the resulting value in place of the parenthetical
-        String result = expression.substring(0, startIndex)
-                .concat(String.valueOf(innerExpressionValue))
-                .concat(expression.substring(endIndex + 1));
-
-        return result;
     }
 
     public static void partTwo() throws IOException {
