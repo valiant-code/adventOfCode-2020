@@ -219,7 +219,9 @@ public class Day20 {
 
         // place the top left corner piece
         // hardcoding tileId from part 1 because lazy
-        puzzle[0][0] = tiles.remove(3083);
+        Tile corner = tiles.stream().filter(t -> t.getTileNumber() == 3083).findAny().get();
+        puzzle[0][0] = corner;
+        tiles.remove(corner);
 
         // ensure the corner is oriented such that top and left sides do not match any
         // other edges
@@ -488,58 +490,6 @@ public class Day20 {
         System.out.println("Part 2 Answer: " + count);
     }
 
-
-    private static ImmutablePair<Integer, Map<List<Integer>, Boolean>> getTileToTheRight
-            (Integer tileNum, Map<Integer, Map<List<Integer>, Boolean>> allTilesMap) {
-
-        AtomicInteger counter = new AtomicInteger();
-        Map<List<Integer>, Boolean> tileUnderTest = allTilesMap.get(tileNum);
-
-        List<Boolean> topRow = topRowCoordinates.stream().map(tileUnderTest::get).collect(Collectors.toList());
-        List<Boolean> topRowReverse = new ArrayList<>(topRow);
-        Collections.reverse(topRowReverse);
-
-        List<Boolean> bottomRow = bottomRowCoordinates.stream().map(tileUnderTest::get).collect(Collectors.toList());
-        List<Boolean> bottomRowReverse = new ArrayList<>(bottomRow);
-        Collections.reverse(bottomRowReverse);
-
-        List<Boolean> leftCol = leftColCoordinates.stream().map(tileUnderTest::get).collect(Collectors.toList());
-        List<Boolean> leftColReverse = new ArrayList<>(leftCol);
-        Collections.reverse(leftColReverse);
-
-        List<Boolean> rightCol = rightColCoordinates.stream().map(tileUnderTest::get).collect(Collectors.toList());
-        List<Boolean> rightColReverse = new ArrayList<>(rightCol);
-        Collections.reverse(rightColReverse);
-
-        for (Integer key : allTilesMap.keySet()) {
-            if (key.equals(tileNum)) {
-                continue;
-            }
-            Map<List<Integer>, Boolean> nextTile = allTilesMap.get(key);
-            List<Boolean> nextTileTop = topRowCoordinates.stream().map(nextTile::get).collect(Collectors.toList());
-            List<Boolean> nextTileBottom = bottomRowCoordinates.stream().map(nextTile::get).collect(Collectors.toList());
-            List<Boolean> nextTileLeft = leftColCoordinates.stream().map(nextTile::get).collect(Collectors.toList());
-            List<Boolean> nextTileRight = rightColCoordinates.stream().map(nextTile::get).collect(Collectors.toList());
-
-            List<List<Boolean>> nextTileEdges = Arrays.asList(nextTileTop, nextTileBottom, nextTileLeft, nextTileRight);
-            nextTileEdges.forEach(edge -> {
-                if (edge.equals(topRow) || edge.equals(topRowReverse)) {
-                    counter.getAndIncrement();
-                }
-                if (edge.equals(bottomRow) || edge.equals(bottomRowReverse)) {
-                    counter.getAndIncrement();
-                }
-                if (edge.equals(leftCol) || edge.equals(leftColReverse)) {
-                    counter.getAndIncrement();
-                }
-                if (edge.equals(rightCol) || edge.equals(rightColReverse)) {
-                    counter.getAndIncrement();
-                }
-            });
-        }
-
-        return null;
-    }
 
     private static String rev(String s) {
         return new StringBuilder(s).reverse().toString();
