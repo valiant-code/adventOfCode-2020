@@ -4,6 +4,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -41,7 +42,7 @@ public class Day20 {
     final static List<List<Integer>> rightColCoordinates = generateEdge(9, 0, 0, 1);
 
     public static void partOne() throws IOException {
-        List<String> input = InputUtil.readFileAsStringList("day20/sample.txt", "\n\n");
+        List<String> input = InputUtil.readFileAsStringList("day20/input.txt", "\n\n");
 
         Pattern digitPattern = Pattern.compile("\\d+");
         Map<Integer, Map<List<Integer>, Boolean>> allTilesMap = input.stream()
@@ -88,23 +89,66 @@ public class Day20 {
         //CEE EEE EEE EEC
 
         //but right now we only need to find ids of corners, no need to match anything else
-        List<ImmutablePair<Integer, Map<List<Integer>, Boolean>>> possibleCorners = new ArrayList<>();
+        List<ImmutablePair<Integer, Integer>> countOfEdgeConnections = new ArrayList<>();
 
         allTilesMap.keySet().forEach(tileNum -> {
-            if (isAPossibleCorner(tileNum, allTilesMap)) {
-                possibleCorners.add(new ImmutablePair<>(tileNum, allTilesMap.get(tileNum)));
-            }
+            Integer pairPossibilities = getNumOfEdgePairs(tileNum, allTilesMap);
+            countOfEdgeConnections.add(new ImmutablePair<>(tileNum, pairPossibilities));
         });
 
+        Long answer = countOfEdgeConnections.stream().filter(p -> p.getRight() == 2).map(p -> p.getLeft().longValue()).reduce(1L, (a, b) -> a * b);
 
-        System.out.println("Part 1 Answer: " + -1);
+        System.out.println("Part 1 Answer: " + answer);
     }
 
-    private static boolean isAPossibleCorner(Integer tileNum, Map<Integer, Map<List<Integer>, Boolean>> allTilesMap) {
-        //TODO hoping that corners will have exactly 2 possible partners
-        //but that could not be true, not sure how to fully solve the puzzle
+    private static int getNumOfEdgePairs(Integer tileNum, Map<Integer, Map<List<Integer>, Boolean>> allTilesMap) {
+        AtomicInteger counter = new AtomicInteger();
+        Map<List<Integer>, Boolean> tileUnderTest = allTilesMap.get(tileNum);
 
-        return false;
+        List<Boolean> topRow = topRowCoordinates.stream().map(tileUnderTest::get).collect(Collectors.toList());
+        List<Boolean> topRowReverse = new ArrayList<>(topRow);
+        Collections.reverse(topRowReverse);
+
+        List<Boolean> bottomRow = bottomRowCoordinates.stream().map(tileUnderTest::get).collect(Collectors.toList());
+        List<Boolean> bottomRowReverse = new ArrayList<>(bottomRow);
+        Collections.reverse(bottomRowReverse);
+
+        List<Boolean> leftCol = leftColCoordinates.stream().map(tileUnderTest::get).collect(Collectors.toList());
+        List<Boolean> leftColReverse = new ArrayList<>(leftCol);
+        Collections.reverse(leftColReverse);
+
+        List<Boolean> rightCol = rightColCoordinates.stream().map(tileUnderTest::get).collect(Collectors.toList());
+        List<Boolean> rightColReverse = new ArrayList<>(rightCol);
+        Collections.reverse(rightColReverse);
+
+        for (Integer key : allTilesMap.keySet()) {
+            if (key.equals(tileNum)) {
+                continue;
+            }
+            Map<List<Integer>, Boolean> nextTile = allTilesMap.get(key);
+            List<Boolean> nextTileTop = topRowCoordinates.stream().map(nextTile::get).collect(Collectors.toList());
+            List<Boolean> nextTileBottom = bottomRowCoordinates.stream().map(nextTile::get).collect(Collectors.toList());
+            List<Boolean> nextTileLeft = leftColCoordinates.stream().map(nextTile::get).collect(Collectors.toList());
+            List<Boolean> nextTileRight = rightColCoordinates.stream().map(nextTile::get).collect(Collectors.toList());
+
+            List<List<Boolean>> nextTileEdges = Arrays.asList(nextTileTop, nextTileBottom, nextTileLeft, nextTileRight);
+            nextTileEdges.forEach(edge -> {
+                if (edge.equals(topRow) || edge.equals(topRowReverse)) {
+                    counter.getAndIncrement();
+                }
+                if (edge.equals(bottomRow) || edge.equals(bottomRowReverse)) {
+                    counter.getAndIncrement();
+                }
+                if (edge.equals(leftCol) || edge.equals(leftColReverse)) {
+                    counter.getAndIncrement();
+                }
+                if (edge.equals(rightCol) || edge.equals(rightColReverse)) {
+                    counter.getAndIncrement();
+                }
+            });
+        }
+
+        return counter.get();
     }
 
     private static void printEdges(int tile, Map<Integer, Map<List<Integer>, Boolean>> allTilesMap) {
@@ -143,7 +187,29 @@ public class Day20 {
     }
 
     public static void partTwo() throws IOException {
+        List<String> input = InputUtil.readFileAsStringList("day20/input.txt", "\n\n");
 
+        Pattern digitPattern = Pattern.compile("\\d+");
+        Map<Integer, Map<List<Integer>, Boolean>> allTilesMap = input.stream()
+                .collect(Collectors.toMap(tile -> {
+                    List<String> tileLines = Arrays.asList(tile.split("\n"));
+                    Matcher m = digitPattern.matcher(tileLines.get(0));
+                    m.find();
+                    Integer tileNum = Integer.valueOf(m.group());
+                    return tileNum;
+                }, tile -> {
+                    List<String> tileLines = Arrays.asList(tile.split("\n"));
+                    return getCoordinateMap(tileLines.subList(1, tileLines.size()));
+                }));
+
+        //but right now we only need to find ids of corners, no need to match anything else
+        List<ImmutablePair<Integer, Integer>> countOfEdgeConnections = new ArrayList<>();
+
+        allTilesMap.keySet().forEach(tileNum -> {
+            Integer pairPossibilities = getNumOfEdgePairs(tileNum, allTilesMap);
+            countOfEdgeConnections.add(new ImmutablePair<>(tileNum, pairPossibilities));
+        });
+        System.out.println("Part 2 Answer: " + -2);
     }
 
 }
