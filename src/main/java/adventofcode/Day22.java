@@ -3,10 +3,7 @@ package adventofcode;
 import adventofcode.vo.Game;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Day22 {
@@ -62,9 +59,11 @@ public class Day22 {
 
     public static void partTwo() throws IOException {
         List<String> input = InputUtil.readFileAsStringList("day22/input.txt", "\n\n");
-        List<Integer> player1 = new ArrayList<>(Arrays.asList(input.get(0).split("\n")).subList(1, input.get(0).split("\n").length).stream().map(Integer::valueOf).collect(Collectors.toList()));
-        List<Integer> player2 = new ArrayList<>(Arrays.asList(input.get(1).split("\n")).subList(1, input.get(0).split("\n").length).stream().map(Integer::valueOf).collect(Collectors.toList()));
+        List<Integer> p1List = new ArrayList<>(Arrays.asList(input.get(0).split("\n")).subList(1, input.get(0).split("\n").length).stream().map(Integer::valueOf).collect(Collectors.toList()));
+        List<Integer> p2List = new ArrayList<>(Arrays.asList(input.get(1).split("\n")).subList(1, input.get(0).split("\n").length).stream().map(Integer::valueOf).collect(Collectors.toList()));
 
+        LinkedList<Integer> player1 = new LinkedList<>(p1List);
+        LinkedList<Integer> player2 = new LinkedList<>(p2List);
         Game recursiveCombat = new Game(player1, player2);
         int winner = recursiveCombat.play();
         List<Integer> finalDeck = new ArrayList<>();
